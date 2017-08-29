@@ -14,13 +14,13 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.apache.logging.log4j.message.Message;
 
-import io.airbrake.javabrake.Notifier;
 import io.airbrake.javabrake.Airbrake;
-import io.airbrake.javabrake.NoticeError;
 import io.airbrake.javabrake.Notice;
+import io.airbrake.javabrake.NoticeError;
 import io.airbrake.javabrake.NoticeStackRecord;
+import io.airbrake.javabrake.Notifier;
 
-@Plugin(name = "AirbrakeAppender", category = "Core", elementType = "appender", printObject = true)
+@Plugin(name = "Airbrake", category = "Core", elementType = "appender", printObject = true)
 public class AirbrakeAppender extends AbstractAppender {
   protected AirbrakeAppender(String name, Filter filter) {
     super(name, filter, null, true);
