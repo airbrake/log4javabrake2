@@ -31,7 +31,7 @@ Ivy:
 
 ## Configuration
 
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" packages="io.airbrake.log4javabrake2">
   <Appenders>
