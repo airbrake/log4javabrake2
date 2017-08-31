@@ -13,4 +13,7 @@ class TestAsyncSender implements AsyncSender {
     this.notice = notice;
     return new CompletableFuture<Notice>();
   }
+
+  @Override
+  public void setHost(String host) {}
 }

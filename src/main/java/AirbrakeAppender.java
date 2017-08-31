@@ -28,17 +28,40 @@ public class AirbrakeAppender extends AbstractAppender {
 
   @Override
   public void append(LogEvent event) {
+    Notice notice = newNotice(event);
+    notice.setContext("level", formatLevel(event.getLevel()));
+    if (event.getContextStack() != null) {
+      notice.setParam("contextStack", event.getContextStack().asList());
+    }
+    if (event.getContextData() != null) {
+      notice.setParam("contextData", event.getContextData());
+    }
+    if (event.getMarker() != null) {
+      notice.setParam("marker", event.getMarker().getName());
+    }
+    Airbrake.send(notice);
+  }
+
+  @PluginFactory
+  public static AirbrakeAppender createAppender(
+      @PluginAttribute("name") String name, @PluginElement("Filter") final Filter filter) {
+    if (name == null) {
+      LOGGER.error("No name provided for AirbrakeAppender");
+      return null;
+    }
+    return new AirbrakeAppender(name, filter);
+  }
+
+  static Notice newNotice(LogEvent event) {
     Throwable throwable = event.getThrown();
     if (throwable != null) {
-      Airbrake.report(throwable);
-      return;
+      return new Notice(throwable);
     }
 
     Message eventMessage = event.getMessage();
     throwable = eventMessage.getThrowable();
     if (throwable != null) {
-      Airbrake.report(throwable);
-      return;
+      return new Notice(throwable);
     }
 
     String type = event.getLoggerName();
@@ -56,29 +79,7 @@ public class AirbrakeAppender extends AbstractAppender {
     List<NoticeError> errors = new ArrayList<>();
     errors.add(err);
 
-    Notice notice = new Notice(errors);
-    notice.setContext("level", formatLevel(event.getLevel()));
-    if (event.getContextStack() != null) {
-      notice.setParam("contextStack", event.getContextStack().asList());
-    }
-    if (event.getContextData() != null) {
-      notice.setParam("contextData", event.getContextData());
-    }
-    if (event.getMarker() != null) {
-      notice.setParam("marker", event.getMarker().getName());
-    }
-
-    Airbrake.send(notice);
-  }
-
-  @PluginFactory
-  public static AirbrakeAppender createAppender(
-      @PluginAttribute("name") String name, @PluginElement("Filter") final Filter filter) {
-    if (name == null) {
-      LOGGER.error("No name provided for AirbrakeAppender");
-      return null;
-    }
-    return new AirbrakeAppender(name, filter);
+    return new Notice(errors);
   }
 
   static String formatLevel(Level level) {
