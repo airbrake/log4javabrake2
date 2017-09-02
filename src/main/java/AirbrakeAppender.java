@@ -18,7 +18,6 @@ import io.airbrake.javabrake.Airbrake;
 import io.airbrake.javabrake.Notice;
 import io.airbrake.javabrake.NoticeError;
 import io.airbrake.javabrake.NoticeStackRecord;
-import io.airbrake.javabrake.Notifier;
 
 @Plugin(name = "Airbrake", category = "Core", elementType = "appender", printObject = true)
 public class AirbrakeAppender extends AbstractAppender {
@@ -66,15 +65,14 @@ public class AirbrakeAppender extends AbstractAppender {
 
     String type = event.getLoggerName();
     String message = eventMessage.getFormattedMessage();
+    StackTraceElement[] stackTrace = null;
 
-    List<NoticeStackRecord> backtrace = null;
     if (event.getSource() != null) {
-      backtrace = new ArrayList<>();
-      StackTraceElement source = event.getSource();
-      backtrace.add(new NoticeStackRecord(source));
+      stackTrace = new StackTraceElement[1];
+      stackTrace[0] = event.getSource();
     }
 
-    NoticeError err = new NoticeError(type, message, backtrace);
+    NoticeError err = new NoticeError(type, message, stackTrace);
 
     List<NoticeError> errors = new ArrayList<>();
     errors.add(err);
