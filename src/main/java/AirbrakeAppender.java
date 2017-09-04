@@ -28,7 +28,7 @@ public class AirbrakeAppender extends AbstractAppender {
   @Override
   public void append(LogEvent event) {
     Notice notice = newNotice(event);
-    notice.setContext("level", formatLevel(event.getLevel()));
+    notice.setContext("severity", formatLevel(event.getLevel()));
     if (event.getContextStack() != null) {
       notice.setParam("contextStack", event.getContextStack().asList());
     }
