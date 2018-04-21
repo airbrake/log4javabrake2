@@ -2,6 +2,7 @@ package io.airbrake.log4javabrake2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
@@ -14,20 +15,31 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.apache.logging.log4j.message.Message;
 
+import io.airbrake.javabrake.Notifier;
 import io.airbrake.javabrake.Airbrake;
 import io.airbrake.javabrake.Notice;
 import io.airbrake.javabrake.NoticeError;
-import io.airbrake.javabrake.NoticeStackRecord;
 
 @Plugin(name = "Airbrake", category = "Core", elementType = "appender", printObject = true)
 public class AirbrakeAppender extends AbstractAppender {
-  protected AirbrakeAppender(String name, Filter filter) {
+  Notifier notifier;
+  String env;
+
+  protected AirbrakeAppender(
+      String name, Filter filter, int projectId, String projectKey, String env) {
     super(name, filter, null, true);
+    if (projectId != 0 && projectKey != null) {
+      this.notifier = new Notifier(projectId, projectKey);
+    }
+    this.env = env;
   }
 
   @Override
   public void append(LogEvent event) {
     Notice notice = newNotice(event);
+    if (this.env != null) {
+      notice.setContext("environment", this.env);
+    }
     notice.setContext("severity", formatLevel(event.getLevel()));
     if (event.getContextStack() != null) {
       notice.setParam("contextStack", event.getContextStack().asList());
@@ -38,17 +50,21 @@ public class AirbrakeAppender extends AbstractAppender {
     if (event.getMarker() != null) {
       notice.setParam("marker", event.getMarker().getName());
     }
-    Airbrake.send(notice);
+    this.send(notice);
   }
 
   @PluginFactory
   public static AirbrakeAppender createAppender(
-      @PluginAttribute("name") String name, @PluginElement("Filter") final Filter filter) {
+      @PluginAttribute("name") String name,
+      @PluginElement("Filter") final Filter filter,
+      @PluginAttribute("projectId") int projectId,
+      @PluginAttribute("projectKey") String projectKey,
+      @PluginAttribute("env") String env) {
     if (name == null) {
       LOGGER.error("No name provided for AirbrakeAppender");
       return null;
     }
-    return new AirbrakeAppender(name, filter);
+    return new AirbrakeAppender(name, filter, projectId, projectKey, env);
   }
 
   static Notice newNotice(LogEvent event) {
@@ -97,5 +113,12 @@ public class AirbrakeAppender extends AbstractAppender {
       return "debug";
     }
     return "trace";
+  }
+
+  Future<Notice> send(Notice notice) {
+    if (this.notifier != null) {
+      return this.notifier.send(notice);
+    }
+    return Airbrake.send(notice);
   }
 }
