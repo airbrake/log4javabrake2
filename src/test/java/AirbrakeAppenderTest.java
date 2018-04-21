@@ -16,10 +16,10 @@ import org.junit.Test;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
-import io.airbrake.javabrake.NoticeError;
-import io.airbrake.javabrake.Airbrake;
-import io.airbrake.javabrake.NoticeStackRecord;
 import io.airbrake.javabrake.Notifier;
+import io.airbrake.javabrake.Airbrake;
+import io.airbrake.javabrake.NoticeError;
+import io.airbrake.javabrake.NoticeStackFrame;
 
 public class AirbrakeAppenderTest {
   Notifier notifier = new Notifier(0, "");
@@ -31,7 +31,7 @@ public class AirbrakeAppenderTest {
     LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
 
     Configuration config = ctx.getConfiguration();
-    Appender appender = AirbrakeAppender.createAppender("Airbrake", null);
+    Appender appender = AirbrakeAppender.createAppender("Airbrake", null, 0, null, null);
     appender.start();
     config.addAppender(appender);
 
@@ -71,9 +71,9 @@ public class AirbrakeAppenderTest {
     assertEquals("io.airbrake.log4javabrake2", err.type);
     assertEquals("hello from Java", err.message);
 
-    NoticeStackRecord record = err.backtrace[0];
-    assertEquals("testLogMessage", record.function);
-    assertEquals("test/io/airbrake/log4javabrake2/AirbrakeAppenderTest.class", record.file);
-    assertEquals(68, record.line);
+    NoticeStackFrame frame = err.backtrace[0];
+    assertEquals("testLogMessage", frame.function);
+    assertEquals("test/io/airbrake/log4javabrake2/AirbrakeAppenderTest.class", frame.file);
+    assertEquals(68, frame.line);
   }
 }

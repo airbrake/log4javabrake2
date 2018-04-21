@@ -7,7 +7,7 @@
 Gradle:
 
 ```gradle
-compile 'io.airbrake:log4javabrake2:0.1.2'
+compile 'io.airbrake:log4javabrake2:0.1.3'
 ```
 
 Maven:
@@ -16,14 +16,14 @@ Maven:
 <dependency>
   <groupId>io.airbrake</groupId>
   <artifactId>log4javabrake2</artifactId>
-  <version>0.1.2</version>
+  <version>0.1.3</version>
 </dependency>
 ```
 
 Ivy:
 
 ```xml
-<dependency org='io.airbrake' name='log4javabrake2' rev='0.1.2'>
+<dependency org='io.airbrake' name='log4javabrake2' rev='0.1.3'>
   <artifact name='log4javabrake2' ext='pom'></artifact>
 </dependency>
 ```
@@ -37,7 +37,7 @@ Ivy:
     <Console name="Console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </Console>
-    <Airbrake name="Airbrake"></Airbrake>
+    <Airbrake name="Airbrake" projectId="12345" projectKey="FIXME" env="production"></Airbrake>
   </Appenders>
   <Loggers>
     <Root>
