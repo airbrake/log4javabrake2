@@ -31,7 +31,7 @@ public class AirbrakeAppenderTest {
     LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
 
     Configuration config = ctx.getConfiguration();
-    Appender appender = AirbrakeAppender.createAppender("Airbrake", null, 0, null, null);
+    Appender appender = AirbrakeAppender.createAppender("Airbrake", null, 0, null, null, true);
     appender.start();
     config.addAppender(appender);
 
@@ -50,6 +50,12 @@ public class AirbrakeAppenderTest {
   public void before() {
     notifier.setAsyncSender(sender);
     Airbrake.setNotifier(notifier);
+  }
+
+  @Test
+  public void testDisabled() {
+    AirbrakeAppender airbrakeAppender = AirbrakeAppender.createAppender("Airbrake", null, 0, null, null, false);
+    assertNull(airbrakeAppender);
   }
 
   @Test

@@ -59,9 +59,14 @@ public class AirbrakeAppender extends AbstractAppender {
       @PluginElement("Filter") final Filter filter,
       @PluginAttribute("projectId") int projectId,
       @PluginAttribute("projectKey") String projectKey,
-      @PluginAttribute("env") String env) {
+      @PluginAttribute("env") String env,
+      @PluginAttribute(value = "enabled", defaultBoolean = true) boolean enabled) {
     if (name == null) {
       LOGGER.error("No name provided for AirbrakeAppender");
+      return null;
+    }
+    if (!enabled) {
+      LOGGER.info("AirbrakeAppender is set to disabled, will not run.");
       return null;
     }
     return new AirbrakeAppender(name, filter, projectId, projectKey, env);
