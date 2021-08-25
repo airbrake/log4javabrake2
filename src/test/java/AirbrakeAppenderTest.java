@@ -16,13 +16,20 @@ import org.junit.Test;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
+import io.airbrake.javabrake.Config;
 import io.airbrake.javabrake.Notifier;
 import io.airbrake.javabrake.Airbrake;
 import io.airbrake.javabrake.NoticeError;
 import io.airbrake.javabrake.NoticeStackFrame;
 
 public class AirbrakeAppenderTest {
-  Notifier notifier = new Notifier(0, "");
+  private Config notifierConfig() {
+    Config config = new Config();
+    config.projectId = 0;
+    config.projectKey = "";
+    return config;
+  }
+  Notifier notifier = new Notifier(notifierConfig());
   Throwable exc = new IOException("hello from Java");
   TestAsyncSender sender = new TestAsyncSender();
 
@@ -73,7 +80,7 @@ public class AirbrakeAppenderTest {
 
     NoticeStackFrame frame = err.backtrace[0];
     assertEquals("testLogMessage", frame.function);
-    assertEquals("test/io/airbrake/log4javabrake2/AirbrakeAppenderTest.class", frame.file);
-    assertEquals(68, frame.line);
+    assertEquals("test-classes/io/airbrake/log4javabrake2/AirbrakeAppenderTest.class", frame.file);
+    assertEquals(75, frame.line);
   }
 }

@@ -15,6 +15,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.apache.logging.log4j.message.Message;
 
+import io.airbrake.javabrake.Config;
 import io.airbrake.javabrake.Notifier;
 import io.airbrake.javabrake.Airbrake;
 import io.airbrake.javabrake.Notice;
@@ -29,7 +30,11 @@ public class AirbrakeAppender extends AbstractAppender {
       String name, Filter filter, int projectId, String projectKey, String env) {
     super(name, filter, null, true);
     if (projectId != 0 && projectKey != null) {
-      this.notifier = new Notifier(projectId, projectKey);
+      Config config = new Config();
+      config.projectId = projectId;
+      config.projectKey = projectKey;
+
+      this.notifier = new Notifier(config);
     }
     this.env = env;
   }
