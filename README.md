@@ -1,6 +1,6 @@
 # log4j2 appender for javabrake
 
-[![Build Status](https://travis-ci.org/airbrake/log4javabrake2.svg?branch=master)](https://travis-ci.org/airbrake/log4javabrake2)
+[![Build & Test](https://github.com/airbrake/log4javabrake2/actions/workflows/gradle.yml/badge.svg)](https://github.com/airbrake/log4javabrake2/actions/workflows/gradle.yml)
 
 ## Installation
 
