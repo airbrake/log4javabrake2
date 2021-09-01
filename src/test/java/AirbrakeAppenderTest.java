@@ -23,8 +23,7 @@ import io.airbrake.javabrake.NoticeStackFrame;
 
 public class AirbrakeAppenderTest {
   Notifier notifier = new Notifier(0, "");
-  Throwable exc = new IOException("hello from Java");
-  TestAsyncSender sender = new TestAsyncSender();
+  TestSyncSender sender = new TestSyncSender();
 
   @BeforeClass
   public static void beforeClass() {
@@ -48,14 +47,14 @@ public class AirbrakeAppenderTest {
 
   @Before
   public void before() {
-    notifier.setAsyncSender(sender);
+    notifier.setSyncSender(sender);
     Airbrake.setNotifier(notifier);
   }
 
   @Test
   public void testLogException() {
     Logger logger = LogManager.getLogger("io.airbrake.log4javabrake2");
-    logger.catching(exc);
+    logger.catching(new IOException("hello from Java"));
 
     NoticeError err = sender.notice.errors.get(0);
     assertEquals("java.io.IOException", err.type);
@@ -74,6 +73,6 @@ public class AirbrakeAppenderTest {
     NoticeStackFrame frame = err.backtrace[0];
     assertEquals("testLogMessage", frame.function);
     assertEquals("test/io/airbrake/log4javabrake2/AirbrakeAppenderTest.class", frame.file);
-    assertEquals(68, frame.line);
+    assertEquals(67, frame.line);
   }
 }
