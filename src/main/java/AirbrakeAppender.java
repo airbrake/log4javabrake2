@@ -122,11 +122,12 @@ public class AirbrakeAppender extends AbstractAppender {
   }
 
   void send(Notice notice) {
-    CompletableFuture<Notice> result = CompletableFuture.supplyAsync(() -> {
+    CompletableFuture.runAsync(() -> {
       if (this.notifier != null) {
-        return this.notifier.sendSync(notice);
+        this.notifier.sendSync(notice);
+      } else {
+        Airbrake.sendSync(notice);
       }
-      return Airbrake.sendSync(notice);
     }, executorService);
   }
 
