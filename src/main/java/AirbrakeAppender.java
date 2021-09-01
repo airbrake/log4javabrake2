@@ -26,7 +26,7 @@ import io.airbrake.javabrake.NoticeError;
 
 @Plugin(name = "Airbrake", category = "Core", elementType = "appender", printObject = true)
 public class AirbrakeAppender extends AbstractAppender {
-  private ExecutorService executorService = newPool();
+  private ExecutorService executorService = Executors.newFixedThreadPool(1);
   Notifier notifier;
   String env;
 
@@ -122,32 +122,19 @@ public class AirbrakeAppender extends AbstractAppender {
   }
 
   void send(Notice notice) {
-    ExecutorService execSvc = activeExecutorService();
-    CompletableFuture.runAsync(() -> {
+    CompletableFuture<Notice> result = CompletableFuture.supplyAsync(() -> {
       if (this.notifier != null) {
-        this.notifier.sendSync(notice);
-      } else {
-        Airbrake.sendSync(notice);
+        return this.notifier.sendSync(notice);
       }
-    }, execSvc).thenRun(() -> {
-      execSvc.shutdown();
-    });
-  }
+      return Airbrake.sendSync(notice);
+    }, executorService);
 
-  private ExecutorService activeExecutorService() {
-    if (executorService.isShutdown()) {
-      executorService = newPool();
-    }
-
-    return executorService;
-  }
-
-  private ExecutorService newPool() {
-    return Executors.newFixedThreadPool(1);
+    // try {
+    //   result.get(3, TimeUnit.SECONDS);
+    // } catch(Exception e){}
   }
 
   void shutdown() {
-    executorService = activeExecutorService();
     executorService.shutdown();
     try {
       if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
