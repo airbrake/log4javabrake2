@@ -24,7 +24,7 @@ import io.airbrake.javabrake.NoticeStackFrame;
 public class AirbrakeAppenderTest {
   Notifier notifier = new Notifier(0, "");
   Throwable exc = new IOException("hello from Java");
-  TestAsyncSender sender = new TestAsyncSender();
+  MockSyncSender sender = new MockSyncSender();
 
   @BeforeClass
   public static void beforeClass() {
@@ -48,7 +48,7 @@ public class AirbrakeAppenderTest {
 
   @Before
   public void before() {
-    notifier.setAsyncSender(sender);
+    notifier.setSyncSender(sender);
     Airbrake.setNotifier(notifier);
   }
 
@@ -56,6 +56,7 @@ public class AirbrakeAppenderTest {
   public void testLogException() {
     Logger logger = LogManager.getLogger("io.airbrake.log4javabrake2");
     logger.catching(exc);
+    shortPause();
 
     NoticeError err = sender.notice.errors.get(0);
     assertEquals("java.io.IOException", err.type);
@@ -66,6 +67,7 @@ public class AirbrakeAppenderTest {
   public void testLogMessage() {
     Logger logger = LogManager.getLogger("io.airbrake.log4javabrake2");
     logger.error("hello from Java");
+    shortPause();
 
     NoticeError err = sender.notice.errors.get(0);
     assertEquals("io.airbrake.log4javabrake2", err.type);
@@ -74,6 +76,12 @@ public class AirbrakeAppenderTest {
     NoticeStackFrame frame = err.backtrace[0];
     assertEquals("testLogMessage", frame.function);
     assertEquals("test/io/airbrake/log4javabrake2/AirbrakeAppenderTest.class", frame.file);
-    assertEquals(68, frame.line);
+    assertEquals(69, frame.line);
+  }
+
+  // shortPause sleeps the thread for a tiny amount of time to prevent exits
+  // before the executorService can do the work under test.
+  void shortPause() {
+    try { Thread.sleep(100); } catch(Exception e){}
   }
 }

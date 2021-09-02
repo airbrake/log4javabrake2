@@ -1,8 +1,12 @@
 package io.airbrake.log4javabrake2;
+import static java.lang.Runtime.getRuntime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
@@ -22,6 +26,7 @@ import io.airbrake.javabrake.NoticeError;
 
 @Plugin(name = "Airbrake", category = "Core", elementType = "appender", printObject = true)
 public class AirbrakeAppender extends AbstractAppender {
+  private ExecutorService executorService = Executors.newFixedThreadPool(4);
   Notifier notifier;
   String env;
 
@@ -32,6 +37,7 @@ public class AirbrakeAppender extends AbstractAppender {
       this.notifier = new Notifier(projectId, projectKey);
     }
     this.env = env;
+    getRuntime().addShutdownHook(new Thread(this::shutdown));
   }
 
   @Override
@@ -115,10 +121,25 @@ public class AirbrakeAppender extends AbstractAppender {
     return "trace";
   }
 
-  Future<Notice> send(Notice notice) {
-    if (this.notifier != null) {
-      return this.notifier.send(notice);
+  void send(Notice notice) {
+    CompletableFuture.runAsync(() -> {
+      if (this.notifier != null) {
+        this.notifier.sendSync(notice);
+      } else {
+        Airbrake.sendSync(notice);
+      }
+    }, executorService);
+  }
+
+  void shutdown() {
+    executorService.shutdown();
+    try {
+      if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+        executorService.shutdownNow();
+      }
+    } catch (InterruptedException ex) {
+      executorService.shutdownNow();
+      Thread.currentThread().interrupt();
     }
-    return Airbrake.send(notice);
   }
 }
