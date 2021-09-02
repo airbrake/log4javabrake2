@@ -24,7 +24,7 @@ import io.airbrake.javabrake.NoticeStackFrame;
 public class AirbrakeAppenderTest {
   Notifier notifier = new Notifier(0, "");
   Throwable exc = new IOException("hello from Java");
-  TestSyncSender sender = new TestSyncSender();
+  MockSyncSender sender = new MockSyncSender();
 
   @BeforeClass
   public static void beforeClass() {

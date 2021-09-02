@@ -3,7 +3,7 @@ package io.airbrake.log4javabrake2;
 import io.airbrake.javabrake.Notice;
 import io.airbrake.javabrake.SyncSender;
 
-class TestSyncSender implements SyncSender {
+class MockSyncSender implements SyncSender {
   public Notice notice;
 
   @Override
