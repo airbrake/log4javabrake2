@@ -47,3 +47,27 @@ Ivy:
   </Loggers>
 </Configuration>
 ```
+
+## Build
+
+```shell
+./gradlew build
+```
+
+Upload to JCentral:
+
+```shell
+./gradlew bintrayUpload
+```
+
+Upload to Maven Central:
+
+```shell
+./gradlew uploadArchives
+./gradlew closeAndReleaseRepository
+```
+
+Usefull links:
+ - http://central.sonatype.org/pages/gradle.html
+ - http://central.sonatype.org/pages/releasing-the-deployment.html
+ - https://search.maven.org/artifact/io.airbrake/log4javabrake2
