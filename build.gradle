@@ -16,7 +16,7 @@ apply plugin: 'java-library'
 apply plugin: 'io.codearte.nexus-staging'
 
 group = 'io.airbrake'
-version = '0.1.6'
+version = '0.1.7'
 
 if (project.hasProperty('signing.keyId')) {
   apply plugin: 'signing'
@@ -31,8 +31,8 @@ repositories {
 
 dependencies {
     compile 'io.airbrake:javabrake:0.1.6'
-    compile 'org.apache.logging.log4j:log4j-api:2.15.0'
-    compile 'org.apache.logging.log4j:log4j-core:2.15.0'
+    compile 'org.apache.logging.log4j:log4j-api:2.17.0'
+    compile 'org.apache.logging.log4j:log4j-core:2.17.0'
 
     testImplementation 'junit:junit:4.12'
 }
