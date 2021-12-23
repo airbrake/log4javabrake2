@@ -48,7 +48,21 @@ Ivy:
 </Configuration>
 ```
 
-## Build
+## Notifier release instrucitons
+
+### A note on Java version
+Make sure you build and release this notifier with open-jdk-11, one way to manage your local java version is using asdf-vm.com. You can install this tool via homebrew:
+```
+brew install asdf
+```
+Then install open-jdk-11 and set it as JAVA home before running any of the `./gradlew` commands:
+```
+asdf plugin add java
+asdf install java openjdk-11
+export JAVA_HOME=$HOME/.asdf/installs/java/openjdk-11
+```
+
+### Building and Releasing
 
 ```shell
 ./gradlew build
