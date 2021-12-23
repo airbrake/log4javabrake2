@@ -51,7 +51,7 @@ Ivy:
 ## Notifier release instrucitons
 
 ### A note on Java version
-Make sure you build and release this notifier with open-jdk-11, one way to manage your local java version is using asdf-vm.com. You can install this tool via homebrew:
+Make sure you build and release this notifier with open-jdk-11, one way to manage your local java version is using [asdf](https://asdf-vm.com). You can install this tool via homebrew:
 ```
 brew install asdf
 ```
