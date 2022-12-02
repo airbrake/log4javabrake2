@@ -13,5 +13,16 @@ class MockSyncSender implements SyncSender {
   }
 
   @Override
-  public void setHost(String host) {}
+  public void setErrorHost(String host) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  @Override
+  public void setAPMHost(String host) {
+    // TODO Auto-generated method stub
+    
+  }
+
+
 }
