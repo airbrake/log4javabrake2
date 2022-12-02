@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" packages="io.airbrake.log4javabrake2">
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </Console>
+    <Airbrake name="Airbrake" projectId="123456" projectKey="FIXME" env="test"></Airbrake>
+  </Appenders>
+  <Loggers>
+    <Root>
+      <AppenderRef ref="Console"/>
+      <AppenderRef ref="Airbrake"/>
+    </Root>
+  </Loggers>
+</Configuration>
