@@ -56,6 +56,9 @@ If you want to send the error logs to Airbrake, you need to have following lines
 ## Error Logging
 
 ```java
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 Logger logger = (org.apache.logging.log4j.Logger)LoggerFactory.getLogger("Name");
 
 try {
