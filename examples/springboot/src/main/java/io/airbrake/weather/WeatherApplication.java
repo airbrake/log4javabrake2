@@ -7,12 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
-import io.airbrake.log4javabrake2.AirbrakeAppender;
-
 @SpringBootApplication
 public class WeatherApplication {
-
-	static AirbrakeAppender appender;
 
 	public static void main(String[] args) {
 		SpringApplication.run(WeatherApplication.class, args);

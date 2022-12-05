@@ -24,13 +24,46 @@ The example application provides three GET endpoints:
     airbrake.project.id=project_id
     airbrake.project.key=project_key
     ```
-3. Need to remove/exclude other loggers and add below dependency in pom.xml
-xml```
-<dependency>
-<groupId>org.springframework.boot</groupId>
-<artifactId>spring-boot-starter-log4j2</artifactId>
-</dependency>
-```
+3. Need to remove/exclude other logger dependencies.
+
+    In pom.xml -
+
+    ```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <exclusions>
+            <exclusion>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+    ```
+
+    And add following dependency
+
+    ```xml
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-log4j2</artifactId>
+    </dependency>
+    ```
+
+    In gradle -
+
+    ```
+    implementation ('org.springframework.boot:spring-boot-starter-web')
+    {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+    ```
+
+    And add following dependency
+
+    ```
+    implementation 'org.springframework.boot:spring-boot-starter-log4j2:2.7.3'
+    ```
 
 4. Run the application
 
