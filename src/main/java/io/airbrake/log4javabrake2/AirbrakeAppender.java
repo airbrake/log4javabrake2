@@ -1,4 +1,5 @@
 package io.airbrake.log4javabrake2;
+
 import static java.lang.Runtime.getRuntime;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class AirbrakeAppender extends AbstractAppender {
 
   protected AirbrakeAppender(
       String name, Filter filter, int projectId, String projectKey, String env) {
-    super(name, filter, null, true,Property.EMPTY_ARRAY);
+    super(name, filter, null, true, Property.EMPTY_ARRAY);
     if (projectId != 0 && projectKey != null) {
       Config config = new Config();
       config.projectId = projectId;
@@ -128,8 +129,7 @@ public class AirbrakeAppender extends AbstractAppender {
   void send(Notice notice) {
     CompletableFuture.runAsync(() -> {
       if (this.notifier != null) {
-       this.notifier.sendSync(notice);
-        
+        this.notifier.sendSync(notice);
       } else {
         Airbrake.sendSync(notice);
       }
