@@ -1,5 +1,8 @@
 package io.airbrake.log4javabrake2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 
 import org.apache.logging.log4j.Level;
@@ -7,27 +10,30 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.BeforeClass;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import io.airbrake.javabrake.Notifier;
 import io.airbrake.javabrake.Airbrake;
+import io.airbrake.javabrake.Config;
 import io.airbrake.javabrake.NoticeError;
 import io.airbrake.javabrake.NoticeStackFrame;
 
 public class AirbrakeAppenderTest {
-  Notifier notifier = new Notifier(0, "");
+ 
+  static Notifier notifier;
   Throwable exc = new IOException("hello from Java");
   MockSyncSender sender = new MockSyncSender();
 
-  @BeforeClass
+  @BeforeAll
   public static void beforeClass() {
+
+    Config conf = new Config();
+    notifier = new Notifier(conf);
+
     LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
 
     Configuration config = ctx.getConfiguration();
@@ -35,18 +41,13 @@ public class AirbrakeAppenderTest {
     appender.start();
     config.addAppender(appender);
 
-    AppenderRef ref = AppenderRef.createAppenderRef("Airbrake", null, null);
-    AppenderRef[] refs = new AppenderRef[] {ref};
-
-    LoggerConfig loggerConfig =
-        LoggerConfig.createLogger(
-            "false", Level.ERROR, "io.airbrake.log4javabrake2", "true", refs, null, config, null);
+    LoggerConfig loggerConfig = new LoggerConfig("io.airbrake.log4javabrake2", Level.ERROR, false);
     loggerConfig.addAppender(appender, null, null);
     config.addLogger("io.airbrake.log4javabrake2", loggerConfig);
     ctx.updateLoggers();
   }
 
-  @Before
+  @BeforeEach
   public void before() {
     notifier.setSyncSender(sender);
     Airbrake.setNotifier(notifier);
@@ -73,10 +74,10 @@ public class AirbrakeAppenderTest {
     assertEquals("io.airbrake.log4javabrake2", err.type);
     assertEquals("hello from Java", err.message);
 
-    NoticeStackFrame frame = err.backtrace[0];
-    assertEquals("testLogMessage", frame.function);
-    assertEquals("test/io/airbrake/log4javabrake2/AirbrakeAppenderTest.class", frame.file);
-    assertEquals(69, frame.line);
+  NoticeStackFrame frame = err.backtrace[0];
+  assertEquals("testLogMessage", frame.function);
+  assertTrue(frame.file.contains("test/io/airbrake/log4javabrake2/AirbrakeAppenderTest.class"));
+  assertEquals(69, frame.line);
   }
 
   // shortPause sleeps the thread for a tiny amount of time to prevent exits

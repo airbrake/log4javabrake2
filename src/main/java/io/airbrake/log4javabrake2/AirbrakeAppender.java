@@ -1,4 +1,5 @@
 package io.airbrake.log4javabrake2;
+
 import static java.lang.Runtime.getRuntime;
 
 import java.util.ArrayList;
@@ -12,15 +13,16 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
-import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.apache.logging.log4j.message.Message;
 
 import io.airbrake.javabrake.Notifier;
 import io.airbrake.javabrake.Airbrake;
+import io.airbrake.javabrake.Config;
 import io.airbrake.javabrake.Notice;
 import io.airbrake.javabrake.NoticeError;
 
@@ -32,9 +34,12 @@ public class AirbrakeAppender extends AbstractAppender {
 
   protected AirbrakeAppender(
       String name, Filter filter, int projectId, String projectKey, String env) {
-    super(name, filter, null, true);
+    super(name, filter, null, true, Property.EMPTY_ARRAY);
     if (projectId != 0 && projectKey != null) {
-      this.notifier = new Notifier(projectId, projectKey);
+      Config config = new Config();
+      config.projectId = projectId;
+      config.projectKey = projectKey;
+      this.notifier = new Notifier(config);
     }
     this.env = env;
     getRuntime().addShutdownHook(new Thread(this::shutdown));
@@ -47,7 +52,7 @@ public class AirbrakeAppender extends AbstractAppender {
       notice.setContext("environment", this.env);
     }
     notice.setContext("severity", formatLevel(event.getLevel()));
-    if (event.getContextStack() != null) {
+    if (event.getContextStack() != null && event.getContextStack().size() > 0) {
       notice.setParam("contextStack", event.getContextStack().asList());
     }
     if (event.getContextData() != null) {
