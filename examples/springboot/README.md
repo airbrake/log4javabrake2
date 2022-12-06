@@ -18,7 +18,7 @@ The example application provides three GET endpoints:
 
 2. You must get both `projectId` & `projectKey`.
 
-    Find your `projectId` and `projectKey` in your Airbrake account and replace them in `log4j2.xml` file. Also mention your `env` (environment).
+    Find your `projectId` and `projectKey` in your Airbrake account and replace them in `log4j2.xml` file. Also mention project `env` (environment).
 
     ```xml
     <?xml version="1.0" encoding="UTF-8"?>
