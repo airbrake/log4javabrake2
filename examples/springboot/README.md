@@ -16,15 +16,28 @@ The example application provides three GET endpoints:
     mvn install
     ```
 
-2. You must get both `project_id` & `project_key`.
+2. You must get both `projectId` & `projectKey`.
 
-    Find your `project_id` and `project_key` in your Airbrake account and replace them in `application.properties` file.
+    Find your `projectId` and `projectKey` in your Airbrake account and replace them in `log4j2.xml` file. Also mention your `env` (environment).
 
-    ```java
-    airbrake.project.id=project_id
-    airbrake.project.key=project_key
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="WARN" packages="io.airbrake.log4javabrake2">
+        <Appenders>
+            <Console name="Console" target="SYSTEM_OUT">
+                <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            </Console>
+            <Airbrake name="Airbrake" projectId="123456" projectKey="FIXME" env="test"></Airbrake>
+        </Appenders>
+        <Loggers>
+            <Root>
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="Airbrake"/>
+            </Root>
+        </Loggers>
+    </Configuration>
     ```
-3. Need to remove/exclude other logger dependencies.
+3. Need to remove/exclude other logger dependencies. For example -
 
     In pom.xml -
 
